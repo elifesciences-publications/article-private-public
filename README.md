@@ -9,3 +9,5 @@ FigureX.m files will generate the specified plots from the paper by loading beha
 The paths in these scripts require altering the directory variable ‘repoBase’ to point to your local version of the repository.
 
 Unthresholded group-level statistical maps supporting whole-brain analyses are available on NeuroVault: *TO BE ADDED*.
+
+This code is being released with a permissive open-source license. You should feel free to use or adapt the code as long as you follow the terms of the license. If you make use of the behavioural, modelling or neuroimaging analyses, we would appreciate that you cite the paper.
