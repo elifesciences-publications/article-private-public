@@ -4,7 +4,7 @@ This repository contains anonymised behavioural and neural data and code support
 
 <a href="https://doi.org/10.1101/2020.02.21.954305">Bang, Ershadmanesh, Nili & Fleming (2020) “Private-public mappings in human  prefrontal cortex” bioRxiv</a>
 
-FigureX.m files will generate the specified plots from the paper by loading behavioural data, model predictions and/or fMRI ROI data.
+FigureX.m files will generate the specified plots and associated statistical analyses.
 
 The paths in these scripts require altering the directory variable ‘repoBase’ to point to your local version of the repository.
 
