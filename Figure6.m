@@ -1,15 +1,14 @@
 % Bang et al (2020) Private-public mappings in human prefrontal cortex
 %
-% Reproduces Figure 3C
+% Reproduces Figure 6B
 %
-% Visualises ROI contrast estimates under GLM1 and performs associated 
-% statistical test
+% Visualises ROI EDIs and performs associated statistical tests
 %
-% Note that contrast estimate for "signalled vs hidden" (SvH) context is not
-% shown in Figure 3C but is included here
+% Data also contains split-data RDMs (sdRDMs) underlying EDI calculation
+% as well as run-specific EDIs and sdRDMs
 %
-% Statistical tests can be reproduced by applying one-sample t-tests to
-% contrast estimates: e.g. [H,P,CI,STATS]= ttest(beta{roi},0)
+% Statistical tests can be reproduced by applying one-tailed sign-rank test
+% to EDIs: e.g. [SIGNIFICANCE]= signrank(EDIs{roi}(:,space),0,'tail','right')
 %
 % Dan Bang danbang.db@gmail.com 2020
 
@@ -26,13 +25,32 @@ n_subjects= 28;
 fs= filesep;
 repoBase= [getDropbox(1),fs,'Ego',fs,'Matlab',fs,'ucl',fs,'social_learn',fs,'Repository',fs,'GitHub'];
 dataDir= [repoBase,fs,'Data',fs,'Behaviour',fs,'Scan'];
-scanDir= [repoBase,fs,'Data',fs,'fMRI',fs,'ROI_ContrastEstimates'];
+scanDir= [repoBase,fs,'Data',fs,'fMRI',fs,'ROI_RSA'];
 
 % Add customn functions
 addpath('Functions');
 
 % ROIs
 my_ROIs= {'dACC','pgACC','FPl'};
+
+%% -----------------------------------------------------------------------
+%% ANALYSIS
+
+% Loop through subjects
+for s= 1:n_subjects;
+    % Loop through ROIs
+    for i_roi= 1:length(my_ROIs);
+        % Load stimulus EDI
+        load([scanDir,fs,'s',num2str(s),'_',my_ROIs{i_roi},'_EDI_coherence.mat']);
+        EDIs{i_roi}(s,1)= EDI;
+        % Load context EDI
+        load([scanDir,fs,'s',num2str(s),'_',my_ROIs{i_roi},'_EDI_context.mat']);
+        EDIs{i_roi}(s,2)= EDI;
+        % Load full task space EDI
+        load([scanDir,fs,'s',num2str(s),'_',my_ROIs{i_roi},'_EDI_full.mat']);
+        EDIs{i_roi}(s,3)= EDI;
+    end
+end
 
 %% -----------------------------------------------------------------------
 %% VISUALISATION
@@ -44,12 +62,11 @@ for i_roi= 1:length(my_ROIs);
     jitter=.5;
     ms= 14;
     dcol= [0 0 0];
-    axisFS= 28;
+    axisFS= 34;
     labelFS= 44;
     lw= 4;
     % statistics
-    load([scanDir,fs,my_ROIs{i_roi},'_ContrastEstimates.mat']);
-    my_data= contrastEstimates;
+    my_data= EDIs{i_roi};
     muz= mean(my_data);
     sem= std(my_data)/sqrt(n_subjects);
     % plot bars
@@ -58,15 +75,15 @@ for i_roi= 1:length(my_ROIs);
     for i= 1:numel(muz); plot([i i],[muz(i)-sem(i) muz(i)+sem(i)],'k-','LineWidth',lw); end
     plot([0 length(muz)+1],[0 0],'k-','LineWidth',lw);
     % tidy up
-    ylim([-0.7 1.7]); 
-    set(gca,'YTick',-.5:.5:1.5);
+    ylim([-0.15 0.45]); 
+    set(gca,'YTick',-.1:.1:.4);
     xlim([0 length(muz)+1]);
-    set(gca,'Xtick',1:length(muz),'XTickLabel',{'K','K2','C','C2','SvH'});
+    set(gca,'Xtick',1:length(muz),'XTickLabel',{'K','C','KxC'});
     set(gca,'FontSize',axisFS,'LineWidth',4);
-    xlabel('effect','FontSize',labelFS);
-    ylabel('estimate','FontSize',labelFS);
+    xlabel('space','FontSize',labelFS);
+    ylabel('EDI','FontSize',labelFS);
     title(my_ROIs{i_roi},'FontSize',labelFS,'FontWeight','normal');
     box('off');
     axis square;
-    print('-djpeg','-r300',['Figures',filesep,'Figure3C_',my_ROIs{i_roi}]);
+    print('-djpeg','-r300',['Figures',filesep,'Figure6B_',my_ROIs{i_roi}]);
 end

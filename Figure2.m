@@ -1,6 +1,6 @@
 % Bang et al (2020) Private-public mappings in human prefrontal cortex
 %
-% Reproduces Figure 2 Panels A-C
+% Reproduces Figure 2
 %
 % Visualises behavioural data for fMRI session and performs associated 
 % regression analyses
@@ -216,6 +216,6 @@ set(gca,'YTick',1.5:4.5,'YTickLabel',{'1','2','3','4'});
 set(gca,'XTick',1.5:4.5,'XTickLabel',{'1','2','3','4'});
 set(gca,'FontSize',axisFS,'LineWidth',lw);
 axis square;
-xlabel('context','FontSize',labelFS);
-ylabel('coherence','FontSize',labelFS);
+xlabel('coherence','FontSize',labelFS);
+ylabel('context','FontSize',labelFS);
 print('-djpeg','-r300',['figures',filesep,'Figure2C']);

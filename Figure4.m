@@ -1,6 +1,7 @@
 % Bang et al (2020) Private-public mappings in human prefrontal cortex
 %
-% Reproduces Figure 4 Panels A-B
+% Implements confidence model illustrated in Figure 4A 
+% and reproduces Figure 4B
 %
 % "Private confidence" is computed by training multinomial regression on
 % data from prescan session and then applying weights to data from fMRI
@@ -9,10 +10,6 @@
 % Visualises encoding of private confidence and public confidence
 % (empirically obseved reports) in ROI timeseries and performs associated
 % statistical tests
-%
-% Visualises founctional coupling between dACC and FPl as a function of the
-% (absolute) difference between private  and public confidence and performs 
-% associated statistical tests
 %
 % Dan Bang danbang.db@gmail.com 2020
 
@@ -250,126 +247,4 @@ set(gca,'FontSize',axisFS,'LineWidth',lw);
 title(my_ROIs{i_roi},'FontSize',labelFS,'FontWeight','normal');
 axis square;
 print('-djpeg','-r300',['Figures',filesep,'Figure4B_',my_ROIs{i_roi}]);
-end
-
-%% -----------------------------------------------------------------------
-%% QUANTIFY ROI FUNCTIONAL COUPLING
-
-% Loop through subjects
-for s= 1:n_subjects;
-
-    % Load ROI data
-    load([scanFDir,fs,'s',num2str(s),'_dACC_','TimeSeries.mat']);    
-    dACC_ts = timeSeries;
-    load([scanFDir,fs,'s',num2str(s),'_pgACC_','TimeSeries.mat']);    
-    pgACC_ts = timeSeries;
-    load([scanFDir,fs,'s',num2str(s),'_FPl_','TimeSeries.mat']);    
-    FPl_ts = timeSeries;
-
-    % Load stimulus and context specifications
-    load([prescanBDir,fs,'s',num2str(s),'_stimulus.mat']);
-    load([prescanBDir,fs,'s',num2str(s),'_context.mat']);
-
-    % Collate data from scan runs
-    for i_r= 1:4;       
-        % Load file
-        load([scanBDir,fs,'s',num2str(s),'_social_run',num2str(i_r),'.mat']);    
-        % Get data field names
-        fn = fieldnames(data);
-        % If first block, then initialise temporary storage structure
-        if i_r == 1; 
-            for i_field = 1:length(fn); 
-                eval(['tmp.',fn{i_field},'=[];']); 
-            end; 
-        end
-        % Add data to temporary storage structure
-        for i_field = 1:length(fn)
-            eval(['tmp.',fn{i_field},'=[tmp.',fn{i_field},' data.',fn{i_field},'];']);
-        end               
-    end
-
-    % Rename collated data
-    data=tmp;
-
-    % Translate miliseconds to seconds
-    data.rt1= data.rt1/1000;
-    data.rt2= data.rt2/1000;
-
-    % Link confidence profile to partner identity
-    context_v= context.con; % profile for partners 1-4;
-    if length(task.settings.advo)>4; context_v(5)= 5; end % if hidden partner
-    for t= 1:length(data.trial);
-        data.context(t)= context_v(data.advcat(t));
-    end
-
-    % Include trials based on deviation from grand mean
-    rt1= log(data.rt1./1000);
-    centre= mean(rt1);
-    stdval= std(rt1)*2.5;
-    include= (rt1>(centre-stdval))&(rt1<(centre+stdval));
-    
-    % Include trials where final time-point estimate is ~NaN
-    for i= 1:size(FPl_ts,1); if isnan(FPl_ts(i,end)); include(i)=0; end; end;
-
-    % Include explicit trials
-    for i= 1:length(data.context); if data.context(i)==5; include(i)=0; end; end;
-
-    % UP-SAMPLED GLM
-    dACC_Zts = zscore(dACC_ts(include,:));
-    pgACC_Zts = zscore(pgACC_ts(include,:));
-    FPl_Zts = zscore(FPl_ts(include,:));
-    private= zscore(model.private{s}(include))';
-    public= zscore(data.con(include));
-    deviation= private-public;
-    t= 0;
-    for j= 1:size(FPl_Zts,2)
-        t= t+1;
-        % dACC
-        x= [deviation; FPl_Zts(:,j)'; FPl_Zts(:,j)'.*deviation]';
-        y= dACC_Zts(:,j);
-        beta= glmfit(x,y,'normal');
-        beta_ts_PPI{1}(s,t)= beta(end);
-        % pgACC
-        x= [deviation; FPl_Zts(:,j)'; FPl_Zts(:,j)'.*deviation]';
-        y= pgACC_Zts(:,j);
-        beta= glmfit(x,y,'normal');
-        beta_ts_PPI{2}(s,t)= beta(end);
-    end
-        
-end
-
-%% -----------------------------------------------------------------------
-%% VISUALISE ROI FUNCTIONAL COUPLING
-
-
-%% FIGURE 4C
-my_PPI= {'FPl-dACC','FPl-pgACC'};
-% specifications
-max_t = 85;
-srate = .144;
-lw=4;
-ms= 8;
-axisFS= 34;
-labelFS= 44;
-% Loop through ROIs
-for i_PPI= 1:length(my_PPI);
-figure('color',[1 1 1]);
-plot([0 max_t+20],[0 0],'k-','LineWidth',lw); hold on
-plot([2/srate 2/srate],[-1 +1],'k--','LineWidth',lw/2); hold on
-PPI= beta_ts_PPI{i_PPI};
-PPIP= ttest(PPI,0);
-for t= 1:length(PPIP); if PPIP(t)==1; plot(t,-.06,'s','color','g','MarkerFaceColor','g','MarkerSize',ms); end; end;
-fillsteplotg(PPI,lw);
-ylim([-.07 .07]); 
-xlim([0 max_t]);
-xlabel('time [seconds]','FontSize',labelFS,'FontWeight','normal');
-ylabel('beta [a.u.]','FontSize',labelFS,'FontWeight','normal');
-set(gca,'YTick',[-.06:.02:.06]);
-set(gca,'XTick',0:14:max_t-2)
-set(gca,'XTickLabel',{'-2','0','2','4','6','8'})
-box('off')
-set(gca,'FontSize',axisFS,'LineWidth',lw);
-title(my_PPI{i_PPI},'FontSize',labelFS,'FontWeight','normal');
-axis square;
-print('-djpeg','-r300',['Figures',filesep,'Figure4C_',my_PPI{i_PPI}]);
 end
