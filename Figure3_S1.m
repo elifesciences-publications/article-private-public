@@ -69,7 +69,7 @@ for i_roi= 1:3;
     c=colorbar;
     set(c,'YTick',-.3:.1:.3,'LineWidth',lw,'FontSize',barFS);
     caxis([-.3 .3]);
-    print('-djpeg','-r300',['Figures',filesep,'Figure2_S1A_',my_ROIs{i_roi}]);
+    print('-djpeg','-r300',['Figures',filesep,'Figure3_S1A_',my_ROIs{i_roi}]);
 end
 
 
@@ -139,7 +139,7 @@ set(gca,'FontSize',axisFS,'LineWidth',lw);
 c=colorbar;
 set(c,'YTick',-.05:.05:.2,'LineWidth',lw,'FontSize',barFS);
 caxis([-.05 .2]);
-print('-djpeg','-r300',['Figures',filesep,'Figure2_S1B1']);
+print('-djpeg','-r300',['Figures',filesep,'Figure3_S1B1']);
 
 %% -----------------------------------------------------------------------
 %% VISUALISE GROUP-AGGREGATE MODEL COMPARISON -- FOR REPOSITORY
@@ -169,7 +169,7 @@ set(gca,'FontSize',axisFS,'LineWidth',lw);
 xlim([-.25 .45]);
 ylim([.5 3.5]);
 xlabel('full-reduced [adj. R2]','FontSize',labelFS);
-print('-djpeg','-r300',['Figures',filesep,'Figure2_S1B2']);
+print('-djpeg','-r300',['Figures',filesep,'Figure3_S1B2']);
 
 %% -----------------------------------------------------------------------
 %% ESTIMATE MIXED-EFFECTS MODEL
@@ -253,7 +253,7 @@ set(gca,'FontSize',axisFS,'LineWidth',lw);
 c=colorbar;
 set(c,'YTick',-.05:.05:.2,'LineWidth',lw,'FontSize',barFS);
 caxis([-.05 .2]);
-print('-djpeg','-r300',['Figures',filesep,'Figure2_S1C1']);
+print('-djpeg','-r300',['Figures',filesep,'Figure3_S1C1']);
 
 %% -----------------------------------------------------------------------
 %% VISUALISE GROUP-AGGREGATE MODEL COMPARISON -- FOR REPOSITORY
@@ -283,4 +283,4 @@ set(gca,'FontSize',axisFS,'LineWidth',lw);
 xlim([.005 .055]);
 ylim([.5 3.5]);
 xlabel('full-reduced [adj. R2]','FontSize',labelFS);
-print('-djpeg','-r300',['Figures',filesep,'Figure2_S1C2']);
+print('-djpeg','-r300',['Figures',filesep,'Figure3_S1C2']);

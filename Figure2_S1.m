@@ -152,7 +152,7 @@ for i_p= 1:3
     xlabel('coherence','FontSize',labelFS);
     ylabel('confidence','FontSize',labelFS);
     title(['phase ',num2str(i_p)],'FontSize',labelFS,'FontWeight','normal');
-    print('-djpeg','-r300',['Figures',filesep,'SFigure2A_Phase',num2str(i_p)]);
+    print('-djpeg','-r300',['Figures',filesep,'Figure2_S1A_Phase',num2str(i_p)]);
 end
 
 %% FIGURE 2B
@@ -189,7 +189,7 @@ for i_p= 1:3
     xlabel('context','FontSize',labelFS);
     ylabel('confidence','FontSize',labelFS);
     title(['phase ',num2str(i_p)],'FontSize',labelFS,'FontWeight','normal');
-    print('-djpeg','-r300',['Figures',filesep,'SFigure2B_Phase',num2str(i_p)]);
+    print('-djpeg','-r300',['Figures',filesep,'Figure2_S1B_Phase',num2str(i_p)]);
 end
 
 %% FIGURE 2C
@@ -215,5 +215,5 @@ for i_p= 1:3
     xlabel('context','FontSize',labelFS);
     ylabel('coherence','FontSize',labelFS);
     title(['phase ',num2str(i_p)],'FontSize',labelFS,'FontWeight','normal');
-    print('-djpeg','-r300',['Figures',filesep,'SFigure2C_Phase',num2str(i_p)]);
+    print('-djpeg','-r300',['Figures',filesep,'Figure2_S1C_Phase',num2str(i_p)]);
 end

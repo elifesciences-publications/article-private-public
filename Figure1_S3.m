@@ -58,9 +58,11 @@ end
 plot([0 51],[0 51],'k-','LineWidth',4); hold on
 set(gca,'LineWidth',4,'FontSize',32)
 set(gca,'XTick',1:10:51,'YTick',1:10:51,'XTickLabel',{'1','2','3','4','5','6'},'YTickLabel',{'1','2','3','4','5','6'});
+xlabel('partner(s) mean confidence','FontSize',32)
+ylabel('subject mean confidence','FontSize',32)
 c=colorbar;
 set(c,'LineWidth',4);
 set(c,'YTick',[.74 .82],'YTickLabel',{'min','max'});
 caxis([.74 .82]);
-axis square
+axis square;
 print(figz,'-djpeg','-r400',['Figures',filesep,'Figure1_S3']);    
