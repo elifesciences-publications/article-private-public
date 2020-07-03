@@ -1,3 +1,6 @@
+This code is associated with the paper from Dan Bang et al., "Private-public mappings in human
+prefrontal cortex". eLife, 2020. http://doi.org/10.7554/eLife.56477
+
 # article-private-public
 
 This repository contains anonymised behavioural and neural data and code supporting:
